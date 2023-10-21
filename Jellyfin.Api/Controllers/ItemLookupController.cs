@@ -141,6 +141,23 @@ public class ItemLookupController : BaseJellyfinApiController
     }
 
     /// <summary>
+    /// Get episode remote search.
+    /// </summary>
+    /// <param name="query">Remote search query.</param>
+    /// <response code="200">Episode remote search executed.</response>
+    /// <returns>
+    /// A <see cref="Task" /> that represents the asynchronous operation to get the remote search results.
+    /// The task result contains an <see cref="OkResult"/> containing the list of remote search results.
+    /// </returns>
+    [HttpPost("Items/RemoteSearch/Episode")]
+    public async Task<ActionResult<IEnumerable<RemoteSearchResult>>> GetEpisodeRemoteSearchResults([FromBody, Required] RemoteSearchQuery<EpisodeInfo> query)
+    {
+        var results = await _providerManager.GetRemoteSearchResults<Episode, EpisodeInfo>(query, CancellationToken.None)
+            .ConfigureAwait(false);
+        return Ok(results);
+    }
+
+    /// <summary>
     /// Get box set remote search.
     /// </summary>
     /// <param name="query">Remote search query.</param>
