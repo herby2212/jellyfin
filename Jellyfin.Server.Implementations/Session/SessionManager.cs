@@ -555,7 +555,8 @@ namespace Emby.Server.Implementations.Session
             if (_config.Configuration.IdleSessionThreshold > 0)
             {
                 _idleTimer ??= new Timer(CheckForIdlePlayback, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
-            } else
+            }
+            else
             {
                 StopIdleCheckTimer();
             }
