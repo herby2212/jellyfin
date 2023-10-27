@@ -552,7 +552,13 @@ namespace Emby.Server.Implementations.Session
 
         private void StartCheckTimers()
         {
-            _idleTimer ??= new Timer(CheckForIdlePlayback, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+            if (_config.Configuration.IdleSessionThreshold > 0)
+            {
+                _idleTimer ??= new Timer(CheckForIdlePlayback, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+            } else
+            {
+                StopIdleCheckTimer();
+            }
 
             if (_config.Configuration.InactiveSessionThreshold > 0)
             {
@@ -590,12 +596,12 @@ namespace Emby.Server.Implementations.Session
             if (playingSessions.Count > 0)
             {
                 var idle = playingSessions
-                    .Where(i => (DateTime.UtcNow - i.LastPlaybackCheckIn).TotalMinutes > 5)
+                    .Where(i => (DateTime.UtcNow - i.LastPlaybackCheckIn).TotalMinutes > _config.Configuration.IdleSessionThreshold)
                     .ToList();
 
                 foreach (var session in idle)
                 {
-                    _logger.LogDebug("Session {0} has gone idle while playing", session.Id);
+                    _logger.LogDebug("Session {Session} has gone idle while playing after {IdleTime} minutes.", session.Id, _config.Configuration.IdleSessionThreshold);
 
                     try
                     {
@@ -613,9 +619,6 @@ namespace Emby.Server.Implementations.Session
                         _logger.LogDebug(ex, "Error calling OnPlaybackStopped");
                     }
                 }
-
-                playingSessions = Sessions.Where(i => i.NowPlayingItem is not null)
-                    .ToList();
             }
             else
             {

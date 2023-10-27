@@ -159,6 +159,13 @@ public class ServerConfiguration : BaseApplicationConfiguration
     public int MaxAudiobookResume { get; set; } = 5;
 
     /// <summary>
+    /// Gets or sets the threshold in minutes after a active session is marked as idle.
+    /// If set to 0 the check for idle sessions gets disabled.
+    /// </summary>
+    /// <value>The mark idle session threshold in minutes. 0 to disable.</value>
+    public int IdleSessionThreshold { get; set; } = 5;
+
+    /// <summary>
     /// Gets or sets the threshold in minutes after a inactive session gets closed automatically.
     /// If set to 0 the check for inactive sessions gets disabled.
     /// </summary>
